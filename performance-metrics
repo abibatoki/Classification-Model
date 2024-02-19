@@ -1,0 +1,49 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load your dataset
+file_path = 'C:\Users\user\Downloads\success3.csv' # Replace 'your_dataset.csv' with the file
+path to your dataset
+data = pd.read_csv(file_path)
+
+# Assuming 'X' represents features and 'y' represents the target variable
+X = data.drop('target_column', axis=1) # Replace 'target_column' with the name of your target
+variable
+y = data['target_column']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train models
+model1 = LogisticRegression()
+model1.fit(X_train, y_train)
+
+model2 = RandomForestClassifier()
+model2.fit(X_train, y_train)
+
+# Make predictions on the test data
+y_pred1 = model1.predict(X_test)
+y_pred2 = model2.predict(X_test)
+
+# Generate classification reports for both models
+report1 = classification_report(y_test, y_pred1, output_dict=True)
+report2 = classification_report(y_test, y_pred2, output_dict=True)
+
+# Extract F1-scores for both models
+f1_scores = {
+'Logistic Regression': report1['weighted avg']['f1-score'],
+'Random Forest': report2['weighted avg']['f1-score']
+}
+
+# Convert scores to DataFrame and plot a heatmap
+scores_df = pd.DataFrame(f1_scores, index=['F1-Score'])
+
+plt.figure(figsize=(8, 6))
+heatmap = sns.heatmap(scores_df, annot=True, cmap='coolwarm', fmt='.3f')
+heatmap.set_title('F1-Score Comparison of Models')
+plt.show()

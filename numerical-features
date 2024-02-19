@@ -1,0 +1,24 @@
+import streamlit as st
+import pandas as pd
+
+# Load your CSV dataset
+@st.cache
+def load_data():
+df = pd.read_csv("C:\Users\user\Downloads\filtered_data.csv")
+return df
+
+df = load_data()
+
+# Create a list of numerical features
+numerical_features = ["average_funded", "average_participants", "acquired_companies",
+"offices", "products_number", "number_degrees", "total_rounds", "age_in_years"]
+
+# Streamlit app
+st.title("Dataset with Numerical Features")
+
+# Display the dataset including the specified numerical features
+st.dataframe(df[numerical_features])
+
+# Display statistics for the numerical features
+st.write("Summary Statistics for Numerical Features:")
+st.write(df[numerical_features].describe())

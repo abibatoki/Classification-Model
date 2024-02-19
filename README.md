@@ -170,7 +170,7 @@ Average Cross-Validation Accuracy: 1.0
 
 ![image](https://github.com/abibatoki/Classification-Model/assets/149620766/aee73e2e-f724-4414-a79d-5f2983fa1dc5)
 
-INTERPRETATION
+#Interpretation
 
 The F1-score of 1.0 for the Random Forest model suggests that it achieved perfect precision and recall on the test set.
 An F1-score of 0.880 for the Logistic Regression model indicates a harmonic mean of precision and recall that is less than perfect. The Logistic Regression model might be performing well, but not as well as the Random Forest model in terms of precision and recall on this specific test data.

@@ -1,179 +1,185 @@
-Dataset
+# 🚀 Predicting Startup Success with Crunchbase Data
 
-An excerpt of a dataset released to the public by Crunchbase.
+> 🚀 **Best Model Accuracy (Random Forest with SMOTE): 87.9%**
 
-#Business Understanding
 
-The holy grail of venture capital investment is to invest in companies that either get acquired or issue an IPO. We consider 
-two types of outcomes as successful: the startup issued an IPO (IPO) or it got acquired (is_acquired). A startup would not be 
-considered successful if it closed (is_closed) or none of the previous outcomes (IPO, is_acquired, or is_closed) occur.
+## 📌 Project Overview
 
-#Benefit of the model to an investor
+As someone transitioning into data science with an interest in the banking and finance sector, I sought to take on a project that combines both business relevance and technical depth. This project focuses on predicting startup success using Crunchbase data. I approached it from three key angles:
 
-(i) Enables investors to make more informed decisions by providing them with tools to identify viable investment opportunities among early-stage companies.
+- **Regression** to understand funding patterns  
+- **Classification** to predict startup outcomes  
+- **Clustering** to discover natural groupings among startups
 
-(ii) Helps investors to understand the associated risks and make more accurate risk assessments when considering investment opportunities.
+The goal was to determine the factors that increase the likelihood of a startup's success — measured by IPOs, acquisitions, or a combination of both — while incorporating both machine learning techniques and business intelligence.
 
-(iii) Provide investors with alternative investment strategies.
+---
 
-#Why is the lack of outcome in Crunchbase a sign of failure?
+## 🧰 Code and Resources Used
 
-(i) Failure or closure generally happens without any official announcement or regulatory filing.
+- **Python Version:** 3.11  
+- **IDE:** Jupyter Notebook  
+- **Libraries:** `pandas`, `numpy`, `matplotlib`, `seaborn`, `statsmodels`, `scikit-learn`, `imbalanced-learn`  
+- **Dataset:** An excerpt of a dataset released to the public by Crunchbase
 
-(ii) Successful companies are more likely to be added to the Crunchbase data.
+---
 
-(iii) Indicates the lack of progress or failure to attract further investment.
+## 🧹 Data Cleaning
 
-#Data understanding and preparation
+- Filtered out companies younger than 3 years or older than 7 years to reduce noise (from 31,000+ to ~9,400 observations)
+- Created a new `status` label:  
+  - `Success` = Acquired, IPO, or both  
+  - `Failure` = Closed or no exit
+- Engineered `number_degrees` from MBA, PhD, MS, and Other
+- Dropped columns with high missing values (e.g., `acquired_companies`, `products_number`)
+- Handled missing values selectively
+- Removed funding outliers (above 99th percentile)
 
-![image](https://github.com/abibatoki/Classification-Model/assets/149620766/f511b3d4-83de-4fc9-ba7b-30ee84946eaf)
+---
 
-#Prompt Used
+## 📊 Exploratory Data Analysis (EDA)
 
-Show the age distribution in  years.
+EDA focused on understanding class balance and numerical relationships:
+- **Status Value Counts:** Success vs Failure  
+- **Log-Transformed Funding Distribution**  
+- **Correlation Heatmap** of numeric variables
 
-Use the age range interval of 1-5, 6-10, ..., and 36-40.
+<img width="550" height="414" alt="image" src="https://github.com/user-attachments/assets/304c7ed0-a097-4467-a3d5-26edc2f935c1" />
+  
+<img width="535" height="419" alt="image" src="https://github.com/user-attachments/assets/7c1b2e08-22c6-4a5b-abb7-9860a86751bd" />
+ 
+<img width="2692" height="2439" alt="Correlation Heatmap" src="https://github.com/user-attachments/assets/41924f47-46ea-42c6-87d4-77ad59227b7d" />
 
-Title the chart Age Distribution in Years, label the y-axis Frequency, and x-axis Age Range.
+---
 
+## 📈 Regression Modeling
 
-#Remove all companies from the dataset that are older than 7 years or younger than 3 years of age. How many companies are there in the remaining data?
+### 🔹 Multiple Linear Regression (Statsmodels)
 
-![Companies](https://github.com/abibatoki/Classification-Model/assets/149620766/72e21bbc-66f2-4f79-93a9-bed7e501e026)
+- Dependent variable: `average_funded`
+- Significant predictors: `average_participants`, `number_degrees`, `ipo`
+- `offices` and `is_acquired` were not statistically significant
 
-#Create a new target variable (success) with two values: 1 for success and 0 for failure.
+<img width="483" height="458" alt="image" src="https://github.com/user-attachments/assets/2b74d209-7eab-48ee-b1d2-c02a3fe6b4fb" />
 
-#Target variable: 'Success'
+---
 
-I created a new target variable ‘Success’ based on the assumption that companies that went for an IPO or got acquired during the period were successful.
-It was encoded as a binary variable using the ‘ipo’ or ‘is_acquired’ column.
+### 🔹 Linear Regression (Scikit-learn)
 
-#Create the 'Success' variable (Success: 1, Failure: 0)
+- Repeated regression using Scikit-learn’s `LinearRegression`
+- Log-transformed `average_funded` for normality
+- Coefficients confirmed the importance of `average_participants` and `ipo`
 
-df['Outcome'] = ((df['ipo'] df['is_acquired']).astype(int)
+<img width="310" height="266" alt="image" src="https://github.com/user-attachments/assets/85a008e1-1fc3-4663-847d-83a214c56b91" />
 
-![image](https://github.com/abibatoki/Classification-Model/assets/149620766/a471abbe-5c59-4c52-a977-ca7f58aaca04)
+---
 
-#Combine the features related to the education levels of the founders (mba_degree, phd_degree, ms_degree, other_degree) 
-into a new feature for the total number of degrees obtained by the founders (number_degrees)
+## 🧪 Classification Modeling
 
-![Degrees](https://github.com/abibatoki/Classification-Model/assets/149620766/d8471595-5385-45fb-a895-5506829a81f0)
+### 🔸 Logistic Regression (Baseline – No SMOTE)
 
-#Numerical features in the dataset
+- Initially trained on imbalanced classes
+- High overall accuracy but **poor recall for “Success”**
+- Ineffective at identifying successful startups
 
-(i) Average_Funded: average funding per round
+<img width="345" height="203" alt="image" src="https://github.com/user-attachments/assets/10a5bf5f-d0b9-4ec4-9e1d-075e9e188edd" />
 
-(ii) Average_Participants: average participants per round
+<img width="561" height="461" alt="image" src="https://github.com/user-attachments/assets/82d1c61d-2b54-4665-ac80-497eaffbe4e4" />
+  
+---
 
-(iii) Acquired_Companies: number of acquired companies
+### 🔸 Logistic Regression (With SMOTE)
 
-(iv) Age_in_years: age of the company
+- Used SMOTE to balance the dataset
+- Improved recall and precision for the “Success” class
+- More reliable at flagging high-potential startups
 
-(v) Number_of_degrees: total number of degrees obtained by company founders
+<img width="353" height="202" alt="image" src="https://github.com/user-attachments/assets/339d0501-4e92-4a5e-bdcc-d7f53dd2c3cc" />
 
-(vi) Offices: number of offices
+<img width="562" height="466" alt="image" src="https://github.com/user-attachments/assets/8c3a1ccb-a3a9-4e20-a67a-c6add1848609" />
 
-(vii) Products_number: number of products
+---
 
-(viii) Total_rounds: total number of funding rounds
+## 🌲 Random Forest Classification
 
-![Numerical](https://github.com/abibatoki/Classification-Model/assets/149620766/2e922bd9-684a-4797-a220-57fb27ae9cb7)
+- Used SMOTE-balanced dataset
+- Boosted accuracy from **70.7% to 87%**
+- Strong performance across all evaluation metrics
 
-#Correlations of the numerical features with one another and the target in a heatmap.
+<img width="352" height="202" alt="image" src="https://github.com/user-attachments/assets/f780d03a-75e4-4eb8-8329-5b7d26ba6c79" />
 
-![Final Heatmap](https://github.com/abibatoki/Classification-Model/assets/149620766/59ee52f3-ba5e-4fef-85a4-18aab1eba2b1)
+<img width="562" height="463" alt="image" src="https://github.com/user-attachments/assets/a3977da9-b9df-4bda-8773-682f6353fd89" />
+    
+<img width="2912" height="1665" alt="feature_importance" src="https://github.com/user-attachments/assets/0918348a-fde4-4f53-a79b-17711ed17488" />
 
-#comment on the heatmap
+---
 
-The features are not highly correlated with one another. There may be a need for feature engineering, given the low correlation. To
-improve the model's predictive capability, we may need to create new features, change existing ones, or collect additional data.
+## 🛠️ Hyperparameter Tuning
 
-#Identify the categorical features in the dataset and explain what you need to do with the categorical features before you can use 
-them in the model?
+- Tuned `n_estimators`, `max_depth`, and `min_samples_split` using `GridSearchCV`
+- Slight performance improvement
+- Feature importance rankings remained stable
 
-#Categorical features
+<img width="349" height="193" alt="image" src="https://github.com/user-attachments/assets/39a70358-7260-444c-91ad-8ee0ac554241" />
 
-(i) country_code
-(ii) state_code
-(iii) category_code
+<img width="568" height="460" alt="image" src="https://github.com/user-attachments/assets/3e144dc0-1fc6-4026-8a0e-13282d28b6d1" />
 
-To use them in the model, they have to be encoded using one-hot encoding to create a new column for each value of the feature and
-set the value to 1 if the feature has that value.
+---
 
-#Missing values count and missing value ratio
+## 📚 Clustering Analysis (KMeans)
 
-![Miss Ratio](https://github.com/abibatoki/Classification-Model/assets/149620766/3b382864-232b-4417-8317-9637e10603e6)
+For a final unsupervised learning step, I applied **KMeans Clustering** to group startups based on:
 
-MODELING
+- `category_code` (encoded)
+- `average_funded`
+- `average_participants`
 
-#Training and test data
+### Steps:
+- Scaled all features using `StandardScaler`
+- Used the **elbow method** to determine 3 optimal clusters
+- Visualized results using 2D scatter plots
 
-To split the dataset into training and test datasets, I used the train_test_split function from scikit-learn using the 80/20 ratio.
+<img width="620" height="468" alt="image" src="https://github.com/user-attachments/assets/b5a0b49b-8b7b-4b38-8123-fc22a83155f0" />
+ 
+<img width="586" height="464" alt="image" src="https://github.com/user-attachments/assets/4e62c3b5-8098-4b6c-b722-87977d4639a7" />
+ 
+<img width="574" height="463" alt="image" src="https://github.com/user-attachments/assets/814bf202-43b1-4c5b-bccf-46336635a74b" />
 
-#Processed data
+### Key Insights:
+- Startups in similar sectors tend to attract similar funding amounts
+- Higher `average_participants` is associated with higher funding clusters
+- These clusters help spot high-potential startups independent of IPO or acquisition status
 
-![Pre-processed data](https://github.com/abibatoki/Classification-Model/assets/149620766/93734c6e-9d3e-4e24-8735-76d5c503d04e)
+---
 
-#Logistics regression model
+## 💡 Final Thoughts
 
-![image](https://github.com/abibatoki/Classification-Model/assets/149620766/5929f578-621b-4e19-b52b-b870cf3b5265)
+This end-to-end machine learning project gave me the chance to:
 
-#Random forest model
+- Work with a real-world business dataset
+- Build interpretable and high-performing models
+- Apply data cleaning, feature engineering, and EDA effectively
+- Handle class imbalance with SMOTE
+- Improve model performance through hyperparameter tuning
+- Add unsupervised clustering to surface hidden patterns
 
-![image](https://github.com/abibatoki/Classification-Model/assets/149620766/d13f168d-a28f-468e-a1dc-16748dc43e57)
+---
 
-#Interpretation of result
 
-While the Random Forest model was 100% accurate for the given dataset, there is a possibility that it might be overestimated.
-The logistic regression model, with an accuracy of approximately 91.87%, seems to be more balanced and can be applied to new data more easily.
-It's essential to consider how well these models will perform on new, unseen data (i.e., test them on a different dataset) to ensure they generalize well and
-do not overfit.
 
-Accuracy is high, but the precision and recall for the '1' class are very low, indicating that the model is not effective in identifying successful cases.
-For an investor, the ability to make informed decisions depends on the precision and recall for the positive class. Therefore, this model's performance may not be satisfactory for investment decisions.
 
-#Dealing with imbalanced data using a resampling technique
 
-![image](https://github.com/abibatoki/Classification-Model/assets/149620766/6e5aab0e-62ad-4080-8f21-4e14a93f12c6)
 
-#Using stratified k-fold cross-validation to evaluate the model
 
-STRATIFIED K-FOLD (LOGISTIC REGRESSION)
 
-Accuracy for Fold 1: 0.9160021265284424
 
-Accuracy for Fold 2: 0.9160021265284424
 
-Accuracy for Fold 3: 0.9164893617021277
 
-Accuracy for Fold 4: 0.9159574468085107
 
-Accuracy for Fold 5: 0.9159574468085107
 
-Average Cross-Validation Accuracy: 0.916081701675206
 
-STRATIFIED K-FOLD (RANDOM FOREST)
 
-Accuracy for Fold 1: 1.0
 
-Accuracy for Fold 2: 1.0
-
-Accuracy for Fold 3: 1.0
-
-Accuracy for Fold 4: 1.0
-
-Accuracy for Fold 5: 1.0
-
-Average Cross-Validation Accuracy: 1.0
-
-#Evaluating the model against the test dataset
-
-![image](https://github.com/abibatoki/Classification-Model/assets/149620766/aee73e2e-f724-4414-a79d-5f2983fa1dc5)
-
-#Interpretation
-
-The F1-score of 1.0 for the Random Forest model suggests that it achieved perfect precision and recall on the test set.
-An F1-score of 0.880 for the Logistic Regression model indicates a harmonic mean of precision and recall that is less than perfect. The Logistic Regression model might be performing well, but not as well as the Random Forest model in terms of precision and recall on this specific test data.
 
 
 

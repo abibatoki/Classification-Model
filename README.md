@@ -139,11 +139,11 @@ For a final unsupervised learning step, I applied **KMeans Clustering** to group
 - Used the **elbow method** to determine 3 optimal clusters
 - Visualized results using 2D scatter plots
 
-<img width="620" height="468" alt="image" src="https://github.com/user-attachments/assets/b5a0b49b-8b7b-4b38-8123-fc22a83155f0" />
- 
-<img width="586" height="464" alt="image" src="https://github.com/user-attachments/assets/4e62c3b5-8098-4b6c-b722-87977d4639a7" />
- 
-<img width="574" height="463" alt="image" src="https://github.com/user-attachments/assets/814bf202-43b1-4c5b-bccf-46336635a74b" />
+<img width="625" height="459" alt="image" src="https://github.com/user-attachments/assets/9680077d-76c7-4e44-a475-b5a6c13451b7" />
+
+<img width="596" height="461" alt="image" src="https://github.com/user-attachments/assets/55191da8-29eb-417b-a485-56989580d2bc" />
+
+<img width="603" height="463" alt="image" src="https://github.com/user-attachments/assets/7c36cd2b-66c0-44bc-96a4-2d5938e20813" />
 
 ### Key Insights:
 - Startups in similar sectors tend to attract similar funding amounts
